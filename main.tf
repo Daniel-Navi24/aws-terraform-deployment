@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = "arn:aws:iam::654654480835:role/LabRole"
-  
+
   container_definitions = jsonencode([{
     name      = "it4200-api"
     image     = "bubbaj/it4200-fall-2026:latest"
@@ -36,8 +36,13 @@ resource "aws_ecs_task_definition" "app" {
   }])
 }
 
+resource "aws_lb" "main" {
+  name               = "it4200-alb"
+  internal           = false
+  load_balancer_type = "application"
+  subnets            = data.aws_subnets.default.ids
+}
 
-
-output "cluster_arn" {
-  value = aws_ecs_cluster.main.arn
+output "alb_dns_name" {
+  value = aws_lb.main.dns_name
 }
